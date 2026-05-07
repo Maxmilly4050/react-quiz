@@ -8,24 +8,24 @@ function reducer(state, action) {
       return {
         ...state,
         data: action.payload,
-        loading: false,
+        status: 'ready',
         error: null
       };
     case 'dataError':
       return {
         ...state,
-        loading: false,
+        status: 'error',
         error: action.payload
       };
     default:
-      return state;
+      throw new Error(`Unknown action type: ${action.type}`);
   }
 }
 
 const initialState = {
   data: null,
-  loading: true,
-  error: null
+  error: null,
+  status: 'idle'
 };
 
 function App() {
