@@ -5,6 +5,7 @@ import Main from './Main';
 import { useEffect, useReducer } from 'react';
 import StartScreen from './StartScreen';
 import Question from './Question';
+import NextButton from './NextButton';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -33,6 +34,12 @@ function reducer(state, action) {
         points: question.correctOption === action.payload ?
           question.points + state.points : state.points,
       };
+    case 'nextQuestion':
+      return {
+        ...state,
+        index: state.index + 1,
+        answer: null,
+      };
     default:
       throw new Error(`Unknown action type: ${action.type}`);
   }
@@ -59,12 +66,12 @@ function App() {
   return (
     <div className='app'>
       <Header />
-
       <Main >
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
         {status === 'ready' && <StartScreen questions={questions} dispatch={dispatch} />}
         {status === 'active' && <Question questions={questions} index={index} dispatch={dispatch} answer={answer} />}
+      <NextButton dispatch={dispatch} answer={answer} />
       </Main>
     </div>
   );
