@@ -24,6 +24,11 @@ function reducer(state, action) {
         ...state,
         status: 'active',
       };
+    case 'newAnswer':
+      return {
+        ...state,
+        answer: action.payload,
+      };
     default:
       throw new Error(`Unknown action type: ${action.type}`);
   }
@@ -32,10 +37,12 @@ function reducer(state, action) {
 const initialState = {
   questions: [],
   status: 'loading',
+  index: 0,
+  answer: null,
 };
 
 function App() {
-  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index, answer }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     fetch('http://localhost:3001/questions')
@@ -52,7 +59,7 @@ function App() {
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
         {status === 'ready' && <StartScreen questions={questions} dispatch={dispatch} />}
-        {status === 'active' && <Question />}
+        {status === 'active' && <Question questions={questions} index={index} dispatch={dispatch} answer={answer} />}
       </Main>
     </div>
   );
