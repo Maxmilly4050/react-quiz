@@ -25,9 +25,13 @@ function reducer(state, action) {
         status: 'active',
       };
     case 'newAnswer':
+      const question = state.questions.at(state.index)
+
       return {
         ...state,
         answer: action.payload,
+        points: question.correctOption === action.payload ?
+          question.points + state.points : state.points,
       };
     default:
       throw new Error(`Unknown action type: ${action.type}`);
@@ -39,10 +43,11 @@ const initialState = {
   status: 'loading',
   index: 0,
   answer: null,
+  points: 0,
 };
 
 function App() {
-  const [{ questions, status, index, answer }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index, answer, points }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     fetch('http://localhost:3001/questions')
