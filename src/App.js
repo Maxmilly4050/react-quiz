@@ -4,6 +4,7 @@ import Loader from './Loader';
 import Main from './Main';
 import { useEffect, useReducer } from 'react';
 import StartScreen from './StartScreen';
+import Question from './Question';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -17,6 +18,11 @@ function reducer(state, action) {
       return {
         ...state,
         status: 'error',
+      };
+    case 'start':
+      return {
+        ...state,
+        status: 'active',
       };
     default:
       throw new Error(`Unknown action type: ${action.type}`);
@@ -45,7 +51,8 @@ function App() {
       <Main >
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
-        {status === 'ready' && <StartScreen questions={questions} />}
+        {status === 'ready' && <StartScreen questions={questions} dispatch={dispatch} />}
+        {status === 'active' && <Question />}
       </Main>
     </div>
   );
