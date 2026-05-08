@@ -1,4 +1,6 @@
 import Header from './Header';
+import Error from './Error';
+import Loader from './Loader';
 import Main from './Main';
 import { useEffect, useReducer } from 'react';
 
@@ -7,15 +9,13 @@ function reducer(state, action) {
     case 'dataReceived':
       return {
         ...state,
-        data: action.payload,
+        questions: action.payload,
         status: 'ready',
-        error: null
       };
     case 'dataError':
       return {
         ...state,
         status: 'error',
-        error: action.payload
       };
     default:
       throw new Error(`Unknown action type: ${action.type}`);
@@ -23,19 +23,18 @@ function reducer(state, action) {
 }
 
 const initialState = {
-  data: null,
-  error: null,
-  status: 'idle'
+  questions: [],
+  status: 'loading',
 };
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     fetch('http://localhost:3001/questions')
       .then(response => response.json())
       .then(data => dispatch({ type: 'dataReceived', payload: data }))
-      .catch(error => dispatch({ type: 'dataError', payload: error.message }));
+      .catch(error => dispatch({ type: 'dataError' }));
   }, []);
 
   return (
@@ -43,7 +42,16 @@ function App() {
       <Header />
 
       <Main >
-        <p>This is the main content.</p>
+        {status === 'loading' && <Loader />}
+        {status === 'error' && <Error />}
+        {status === 'ready' && <div className='main'>
+          {questions.map(question => (
+            <div key={question.question} className='question'>
+              <h2>{question.question}</h2>
+              <p>{question.options.join(', ')}</p>
+            </div>
+          ))}
+        </div>}
       </Main>
     </div>
   );
