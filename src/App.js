@@ -3,6 +3,7 @@ import Error from './Error';
 import Loader from './Loader';
 import Main from './Main';
 import { useEffect, useReducer } from 'react';
+import StartScreen from './StartScreen';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -44,14 +45,7 @@ function App() {
       <Main >
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
-        {status === 'ready' && <div className='main'>
-          {questions.map(question => (
-            <div key={question.question} className='question'>
-              <h2>{question.question}</h2>
-              <p>{question.options.join(', ')}</p>
-            </div>
-          ))}
-        </div>}
+        {status === 'ready' && <StartScreen questions={questions} />}
       </Main>
     </div>
   );
