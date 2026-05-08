@@ -1,9 +1,9 @@
-function NextButton({ dispatch, answer, index }) {
+function NextButton({ dispatch, answer, index, numQuestions }) {
     if (answer === null) return null;
     return (
         <div>
-            <button className="btn btn-ui" onClick={() => dispatch(index < 15 ? { type: 'nextQuestion' } : { type: 'finished' })}>
-               {index < 14 ? "Next Question" : "Finish"} 
+            <button className="btn btn-ui" onClick={() => dispatch(index < numQuestions - 1 ? { type: 'nextQuestion' } : { type: 'finish' })}>
+               {index < numQuestions - 1 ? "Next Question" : "Finish"} 
             </button>
         </div>
     )

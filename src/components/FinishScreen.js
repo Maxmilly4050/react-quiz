@@ -5,9 +5,9 @@ function FinishScreen({ points, totalPoints }) {
     if (percentage >= 50) emoji = '😊';
     if (percentage >= 80) emoji = '🤩';
     return (
-        <p className="result">
+        <><p className="result">
             You scored <strong>{points}</strong> out of {totalPoints} points! ({percentage}%) {emoji}
-        </p>
+        </p><button className="btn btn-ui" onClick={() => window.location.reload()}>Restart Quiz</button></>
     )
 }
 

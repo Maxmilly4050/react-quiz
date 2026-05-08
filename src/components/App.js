@@ -8,6 +8,8 @@ import Question from './Question';
 import NextButton from './NextButton';
 import Progress from './Progress';
 import FinishScreen from './FinishScreen';
+import Footer from './Footer';
+import Timer from './Timer';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -75,13 +77,13 @@ function App() {
   return (
     <div className='app'>
       <Header />
-      <Progress index={index} numQuestions={questions.length} points={points} totalPoints={totalPoints} />
+      {status !== 'finished' && <Progress index={index} numQuestions={questions.length} points={points} totalPoints={totalPoints} />}
       <Main >
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
         {status === 'ready' && <StartScreen questions={questions} dispatch={dispatch} />}
         {status === 'active' && <Question questions={questions} index={index} dispatch={dispatch} answer={answer} />}
-        {status === 'active' && <NextButton dispatch={dispatch} answer={answer} index={index} />}
+        {status === 'active' && <NextButton dispatch={dispatch} answer={answer} index={index} numQuestions={questions.length} />}
         {status === 'finished' && <FinishScreen points={points} totalPoints={totalPoints} />}
       </Main>
     </div>
