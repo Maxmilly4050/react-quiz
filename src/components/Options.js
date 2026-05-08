@@ -11,6 +11,7 @@ function Options({ questions, index, dispatch, answer }) {
                         key={i} 
                         onClick={() => dispatch({ type: 'newAnswer', payload: i })}
                         disabled = {answered}
+
                         >
                     {option}
                 </button>

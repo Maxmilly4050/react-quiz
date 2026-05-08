@@ -6,6 +6,8 @@ import { useEffect, useReducer } from 'react';
 import StartScreen from './StartScreen';
 import Question from './Question';
 import NextButton from './NextButton';
+import Progress from './Progress';
+import FinishScreen from './FinishScreen';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -40,6 +42,12 @@ function reducer(state, action) {
         index: state.index + 1,
         answer: null,
       };
+    case 'finish':
+      return {
+        ...state,
+        status: 'finished',
+      };
+    
     default:
       throw new Error(`Unknown action type: ${action.type}`);
   }
@@ -55,6 +63,7 @@ const initialState = {
 
 function App() {
   const [{ questions, status, index, answer, points }, dispatch] = useReducer(reducer, initialState);
+  const totalPoints = questions.reduce((prev, curr) => prev + curr.points, 0);
 
   useEffect(() => {
     fetch('http://localhost:3001/questions')
@@ -66,12 +75,14 @@ function App() {
   return (
     <div className='app'>
       <Header />
+      <Progress index={index} numQuestions={questions.length} points={points} totalPoints={totalPoints} />
       <Main >
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
         {status === 'ready' && <StartScreen questions={questions} dispatch={dispatch} />}
         {status === 'active' && <Question questions={questions} index={index} dispatch={dispatch} answer={answer} />}
-      <NextButton dispatch={dispatch} answer={answer} />
+        {status === 'active' && <NextButton dispatch={dispatch} answer={answer} index={index} />}
+        {status === 'finished' && <FinishScreen points={points} totalPoints={totalPoints} />}
       </Main>
     </div>
   );
