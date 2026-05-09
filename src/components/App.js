@@ -1,8 +1,9 @@
+import { useEffect, useReducer } from 'react';
+
 import Header from './Header';
 import Error from './Error';
 import Loader from './Loader';
 import Main from './Main';
-import { useEffect, useReducer } from 'react';
 import StartScreen from './StartScreen';
 import Question from './Question';
 import NextButton from './NextButton';
@@ -28,6 +29,7 @@ function reducer(state, action) {
       return {
         ...state,
         status: 'active',
+        secondsRemaining: state.questions.length * secondsPerQn,
       };
     case 'newAnswer':
       const question = state.questions.at(state.index)
@@ -49,11 +51,18 @@ function reducer(state, action) {
         ...state,
         status: 'finished',
       };
+    case 'tick':
+      return {
+        ...state,
+        secondsRemaining: state.secondsRemaining - 1,
+        status: state.secondsRemaining === 0 ? 'finished' : state.status,
+      }
     
     default:
       throw new Error(`Unknown action type: ${action.type}`);
   }
 }
+const secondsPerQn = 20;
 
 const initialState = {
   questions: [],
@@ -61,10 +70,11 @@ const initialState = {
   index: 0,
   answer: null,
   points: 0,
+  secondsRemaining: null,
 };
 
 function App() {
-  const [{ questions, status, index, answer, points }, dispatch] = useReducer(reducer, initialState);
+  const [{ questions, status, index, answer, points, secondsRemaining }, dispatch] = useReducer(reducer, initialState);
   const totalPoints = questions.reduce((prev, curr) => prev + curr.points, 0);
 
   useEffect(() => {
@@ -83,7 +93,10 @@ function App() {
         {status === 'error' && <Error />}
         {status === 'ready' && <StartScreen questions={questions} dispatch={dispatch} />}
         {status === 'active' && <Question questions={questions} index={index} dispatch={dispatch} answer={answer} />}
-        {status === 'active' && <NextButton dispatch={dispatch} answer={answer} index={index} numQuestions={questions.length} />}
+        <Footer>
+          {status === 'active' && <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />}
+          {status === 'active' && <NextButton dispatch={dispatch} answer={answer} index={index} numQuestions={questions.length} />}
+        </Footer>
         {status === 'finished' && <FinishScreen points={points} totalPoints={totalPoints} />}
       </Main>
     </div>
